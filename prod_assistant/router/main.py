@@ -2,14 +2,26 @@
 FastAPI router for scraping and vector database operations.
 """
 
+from functools import lru_cache
 from typing import Literal
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from prod_assistant.etl.scraping_service import ScrapingService
 
 
 router = APIRouter(prefix="/api/v1/scraper", tags=["scraper"])
+
+
+@lru_cache()
+def get_scraping_service() -> ScrapingService:
+    """
+    Get or create a cached ScrapingService instance.
+
+    Returns:
+        Cached ScrapingService instance.
+    """
+    return ScrapingService()
 
 
 class ScrapeRequest(BaseModel):
@@ -69,7 +81,10 @@ class FullPipelineResponse(BaseModel):
 
 
 @router.post("/scrape", response_model=ScrapeResponse)
-async def scrape_data(request: ScrapeRequest) -> ScrapeResponse:
+async def scrape_data(
+    request: ScrapeRequest,
+    service: ScrapingService = Depends(get_scraping_service),
+) -> ScrapeResponse:
     """
     Scrape product data from a specified source website.
 
@@ -77,7 +92,6 @@ async def scrape_data(request: ScrapeRequest) -> ScrapeResponse:
     ratings, and reviews from the specified e-commerce website.
     """
     try:
-        service = ScrapingService()
         data = service.scrape_data(
             source=request.source,
             queries=request.queries,
@@ -99,7 +113,9 @@ async def scrape_data(request: ScrapeRequest) -> ScrapeResponse:
 
 
 @router.post("/generate-vector-db", response_model=VectorDBResponse)
-async def generate_vector_db() -> VectorDBResponse:
+async def generate_vector_db(
+    service: ScrapingService = Depends(get_scraping_service),
+) -> VectorDBResponse:
     """
     Generate vector database from previously scraped data.
 
@@ -107,7 +123,6 @@ async def generate_vector_db() -> VectorDBResponse:
     into the AstraDB vector store for similarity search operations.
     """
     try:
-        service = ScrapingService()
         result = service.generate_vector_db()
 
         return VectorDBResponse(
@@ -132,7 +147,10 @@ async def generate_vector_db() -> VectorDBResponse:
 
 
 @router.post("/scrape-and-generate", response_model=FullPipelineResponse)
-async def scrape_and_generate_vector_db(request: ScrapeRequest) -> FullPipelineResponse:
+async def scrape_and_generate_vector_db(
+    request: ScrapeRequest,
+    service: ScrapingService = Depends(get_scraping_service),
+) -> FullPipelineResponse:
     """
     Complete pipeline: scrape data and generate vector database.
 
@@ -141,7 +159,6 @@ async def scrape_and_generate_vector_db(request: ScrapeRequest) -> FullPipelineR
     the product assistant.
     """
     try:
-        service = ScrapingService()
         result = service.scrape_and_generate_vector_db(
             source=request.source,
             queries=request.queries,
