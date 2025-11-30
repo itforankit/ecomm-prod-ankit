@@ -2,15 +2,29 @@ import csv
 import time
 import re
 import os
+from typing import Any
 from bs4 import BeautifulSoup
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
-class FlipkartScraper:
-    def __init__(self, output_dir="data"):
-        self.output_dir = output_dir
+from prod_assistant.etl.base_scraper import BaseScraper
+
+
+class FlipkartScraper(BaseScraper):
+    """
+    Scraper for extracting product data and reviews from Flipkart.
+    """
+
+    def __init__(self, output_dir: str = "data"):
+        """
+        Initialize the Flipkart scraper.
+
+        Args:
+            output_dir: Directory to store scraped data files.
+        """
+        super().__init__(output_dir)
         os.makedirs(self.output_dir, exist_ok=True)
 
     def get_top_reviews(self,product_url,count=2):
@@ -97,8 +111,17 @@ class FlipkartScraper:
         driver.quit()
         return products
     
-    def save_to_csv(self, data, filename="product_reviews.csv"):
-        """Save the scraped product reviews to a CSV file."""
+    def save_to_csv(self, data: list, filename: str = "product_reviews.csv") -> str:
+        """
+        Save the scraped product reviews to a CSV file.
+
+        Args:
+            data: List of scraped product data.
+            filename: Name of the output CSV file.
+
+        Returns:
+            Path to the saved CSV file.
+        """
         if os.path.isabs(filename):
             path = filename
         elif os.path.dirname(filename):  # filename includes subfolder like 'data/product_reviews.csv'
@@ -112,4 +135,37 @@ class FlipkartScraper:
             writer = csv.writer(f)
             writer.writerow(["product_id", "product_title", "rating", "total_reviews", "price", "top_reviews"])
             writer.writerows(data)
-        
+
+        return path
+
+    def scrape(self, query: str, **kwargs) -> list[dict[str, Any]]:
+        """
+        Scrape product data from Flipkart based on a search query.
+
+        Args:
+            query: Search query string.
+            **kwargs: Additional parameters:
+                - max_products (int): Maximum number of products to scrape (default: 1).
+                - review_count (int): Number of reviews per product (default: 2).
+
+        Returns:
+            List of dictionaries containing scraped product data.
+        """
+        max_products = kwargs.get("max_products", 1)
+        review_count = kwargs.get("review_count", 2)
+
+        raw_data = self.scrape_flipkart_products(query, max_products, review_count)
+
+        # Convert list data to dictionaries
+        result = []
+        for item in raw_data:
+            result.append({
+                "product_id": item[0],
+                "product_title": item[1],
+                "rating": item[2],
+                "total_reviews": item[3],
+                "price": item[4],
+                "top_reviews": item[5],
+            })
+
+        return result
