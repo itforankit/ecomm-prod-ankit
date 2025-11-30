@@ -27,8 +27,16 @@ class FlipkartScraper(BaseScraper):
         super().__init__(output_dir)
         os.makedirs(self.output_dir, exist_ok=True)
 
-    def get_top_reviews(self,product_url,count=2):
-        """Get the top reviews for a product.
+    def get_top_reviews(self, product_url: str, count: int = 2) -> str:
+        """
+        Get the top reviews for a product.
+
+        Args:
+            product_url: URL of the product page.
+            count: Number of reviews to fetch (default: 2).
+
+        Returns:
+            String containing top reviews separated by ' || ', or 'No reviews found'.
         """
         options = uc.ChromeOptions()
         options.add_argument("--no-sandbox")
@@ -69,8 +77,20 @@ class FlipkartScraper(BaseScraper):
         driver.quit()
         return " || ".join(reviews) if reviews else "No reviews found"
     
-    def scrape_flipkart_products(self, query, max_products=1, review_count=2):
-        """Scrape Flipkart products based on a search query.
+    def scrape_flipkart_products(
+        self, query: str, max_products: int = 1, review_count: int = 2
+    ) -> list[list[str]]:
+        """
+        Scrape Flipkart products based on a search query.
+
+        Args:
+            query: Search query string.
+            max_products: Maximum number of products to scrape (default: 1).
+            review_count: Number of reviews per product (default: 2).
+
+        Returns:
+            List of product data where each item is a list containing:
+            [product_id, title, rating, total_reviews, price, top_reviews].
         """
         options = uc.ChromeOptions()
         driver = uc.Chrome(options=options,use_subprocess=True)
