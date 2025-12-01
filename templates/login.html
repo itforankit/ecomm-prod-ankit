@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ShopBuddy</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 50%, #ffffff 100%);
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(220, 53, 69, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            border-top: 5px solid #dc3545;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h2 {
+            color: #dc3545;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .login-icon i {
+            color: #ffffff;
+            font-size: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            color: #dc3545;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: none;
+        }
+
+        .form-control.is-valid {
+            border-color: #28a745;
+            background-image: none;
+        }
+
+        .input-group-text {
+            background: #dc3545;
+            border: none;
+            color: #ffffff;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-login:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .validation-hint {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-links a {
+            color: #dc3545;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #c82333;
+            text-decoration: underline;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success.show {
+            display: block;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-danger.show {
+            display: block;
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Please login to your ShopBuddy account</p>
+            </div>
+
+            <div id="successMessage" class="alert-success">
+                <i class="fas fa-check-circle"></i> Login successful! Redirecting...
+            </div>
+
+            <div id="errorMessage" class="alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorText">Invalid credentials. Please try again.</span>
+            </div>
+
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Username</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                    </div>
+                    <div class="error-message" id="usernameError">Username must be at least 5 characters long.</div>
+                    <div class="validation-hint">Minimum 5 characters required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="error-message" id="passwordError">Password must contain both letters and numbers (alphanumeric).</div>
+                    <div class="validation-hint">Must contain only letters and numbers</div>
+                </div>
+
+                <button type="submit" class="btn btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+
+            <div class="footer-links">
+                <a href="#">Forgot Password?</a> | <a href="#">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7 voices7Y6HxOOIEQ9Y6TnkIdBHhtxfLRLpC8Wao10a" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            const usernameInput = $('#username');
+            const passwordInput = $('#password');
+            const usernameError = $('#usernameError');
+            const passwordError = $('#passwordError');
+            const loginBtn = $('#loginBtn');
+            const successMessage = $('#successMessage');
+            const errorMessage = $('#errorMessage');
+
+            // Validate username (at least 5 characters)
+            function validateUsername(username) {
+                return username.length >= 5;
+            }
+
+            // Validate password (alphanumeric only - must contain both letters and numbers)
+            function validatePassword(password) {
+                const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+                const hasLetter = /[a-zA-Z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                return alphanumericRegex.test(password) && hasLetter && hasNumber && password.length > 0;
+            }
+
+            // Real-time username validation
+            usernameInput.on('input', function() {
+                const username = $(this).val();
+                if (username.length > 0) {
+                    if (validateUsername(username)) {
+                        $(this).removeClass('is-invalid').addClass('is-valid');
+                        usernameError.removeClass('show');
+                    } else {
+                        $(this).removeClass('is-valid').addClass('is-invalid');
+                        usernameError.addClass('show');
+                    }
+                } else {
+                    $(this).removeClass('is-valid is-invalid');
+                    usernameError.removeClass('show');
+                }
+            });
+
+            // Real-time password validation
+            passwordInput.on('input', function() {
+                const password = $(this).val();
+                if (password.length > 0) {
+                    if (validatePassword(password)) {
+                        $(this).removeClass('is-invalid').addClass('is-valid');
+                        passwordError.removeClass('show');
+                    } else {
+                        $(this).removeClass('is-valid').addClass('is-invalid');
+                        passwordError.addClass('show');
+                    }
+                } else {
+                    $(this).removeClass('is-valid is-invalid');
+                    passwordError.removeClass('show');
+                }
+            });
+
+            // Form submission
+            $('#loginForm').on('submit', function(event) {
+                event.preventDefault();
+                
+                const username = usernameInput.val();
+                const password = passwordInput.val();
+                
+                // Hide previous messages
+                successMessage.removeClass('show');
+                errorMessage.removeClass('show');
+
+                // Validate both fields
+                let isValid = true;
+
+                if (!validateUsername(username)) {
+                    usernameInput.removeClass('is-valid').addClass('is-invalid');
+                    usernameError.addClass('show');
+                    isValid = false;
+                }
+
+                if (!validatePassword(password)) {
+                    passwordInput.removeClass('is-valid').addClass('is-invalid');
+                    passwordError.addClass('show');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    // Disable button during processing
+                    loginBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Logging in...');
+                    
+                    // WARNING: This is a client-side simulation only for demonstration purposes.
+                    // In production, implement proper backend authentication with:
+                    // - Server-side credential validation
+                    // - Secure password hashing
+                    // - Session management
+                    // - CSRF protection
+                    // - Rate limiting
+                    setTimeout(function() {
+                        // Show success message (demo only - replace with actual backend validation)
+                        successMessage.addClass('show');
+                        
+                        // Redirect to the root path of the same origin
+                        setTimeout(function() {
+                            window.location.pathname = '/';
+                        }, 1500);
+                    }, 1000);
+                } else {
+                    // Show error if validation fails
+                    $('#errorText').text('Please fix the validation errors above.');
+                    errorMessage.addClass('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
